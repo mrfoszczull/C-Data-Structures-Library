@@ -1,51 +1,83 @@
+CC  = gcc
+AR  = ar
+MODE = release
 
-CC = gcc
-AR = ar
-
-CPPFLAGS = -Iinclude
-CFLAGS = -std=c11 -Wall -Wextra -Wpedantic
-DEPFLAGS = -MMD -MP
-
-BUILD_DIR = build
-SRC_DIR = src
+SRC_DIR     = src
+INC_DIR     = include
 EXAMPLE_DIR = examples
+OUT         = build/$(MODE)
 
-SOURCES = $(wildcard $(SRC_DIR)/*.c)
+WARNINGS = -std=c11 -Wall -Wextra -Wpedantic
+
+ifeq ($(MODE),release)
+  MODE_FLAGS = -O2
+else ifeq ($(MODE),debug)
+  MODE_FLAGS = -O0 -g3 -fno-omit-frame-pointer \
+               -fsanitize=address,undefined -fno-sanitize-recover=undefined
+else ifeq ($(MODE),valgrind)
+  MODE_FLAGS = -O0 -g3
+else
+  $(error Unknown MODE '$(MODE)' - use release, debug or valgrind)
+endif
+
+CFLAGS = $(WARNINGS) $(MODE_FLAGS) -I$(INC_DIR) -MMD -MP
+
+SOURCES  = $(wildcard $(SRC_DIR)/*.c)
 EXAMPLES = $(wildcard $(EXAMPLE_DIR)/*.c)
 
-OBJECTS = $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SOURCES))
-DEPS = $(OBJECTS:.o=.d)
+OBJECTS       = $(SOURCES:$(SRC_DIR)/%.c=$(OUT)/%.o)
+EXAMPLE_NAMES = $(notdir $(EXAMPLES:.c=))
+EXAMPLE_BINS  = $(addprefix $(OUT)/,$(EXAMPLE_NAMES))
+LIBRARY       = $(OUT)/libdatastructures.a
 
-EXAMPLE_BINS = $(patsubst $(EXAMPLE_DIR)/%.c,$(BUILD_DIR)/%,$(EXAMPLES))
+EXAMPLE ?= $(firstword $(EXAMPLE_NAMES))
 
-LIBRARY = $(BUILD_DIR)/libdatastructures.a
+SAN_ENV = ASAN_OPTIONS=detect_leaks=1:strict_string_checks=1:detect_stack_use_after_return=1 \
+          UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1
+VALGRIND = valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes \
+                    --error-exitcode=1
 
-.PHONY: all library examples run clean
+.PHONY: all release debug examples run check valgrind clean
 
-all: library examples
+all: $(LIBRARY) $(EXAMPLE_BINS)
 
-library: $(LIBRARY)
+release:
+	@$(MAKE) --no-print-directory MODE=release all
+
+debug:
+	@$(MAKE) --no-print-directory MODE=debug all
 
 examples: $(EXAMPLE_BINS)
 
-$(LIBRARY): $(OBJECTS) | $(BUILD_DIR)
+$(LIBRARY): $(OBJECTS)
 	$(AR) rcs $@ $^
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
+$(OUT)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/%: $(EXAMPLE_DIR)/%.c $(LIBRARY) | $(BUILD_DIR)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $< $(LIBRARY) -o $@
+$(OUT)/%: $(EXAMPLE_DIR)/%.c $(LIBRARY)
+	$(CC) $(CFLAGS) $< $(LIBRARY) -o $@
 
 run: all
-	@test -n "$(EXAMPLE)" || (echo "Usage: make run EXAMPLE=vector_example"; exit 1)
-	./$(BUILD_DIR)/$(EXAMPLE)
+	@test -n "$(EXAMPLE)" || { echo "No examples found in $(EXAMPLE_DIR)/"; exit 1; }
+	$(if $(filter debug,$(MODE)),$(SAN_ENV) )./$(OUT)/$(EXAMPLE)
 
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
+check:
+	@$(MAKE) --no-print-directory MODE=debug all
+	@for e in $(EXAMPLE_NAMES); do \
+	    echo "==> $$e (ASan + UBSan + LSan)"; \
+	    $(SAN_ENV) ./build/debug/$$e || exit 1; \
+	done
+
+valgrind:
+	@$(MAKE) --no-print-directory MODE=valgrind all
+	@for e in $(EXAMPLE_NAMES); do \
+	    echo "==> $$e (Valgrind)"; \
+	    $(VALGRIND) ./build/valgrind/$$e || exit 1; \
+	done
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf build
 
--include $(DEPS)
-
+-include $(OBJECTS:.o=.d) $(EXAMPLE_BINS:=.d)
