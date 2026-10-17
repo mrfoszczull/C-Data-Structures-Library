@@ -1,116 +1,208 @@
 # C Data Structures Library
 
-A collection of data structures implemented in C for learning purposes and practical experimentation.
+A collection of data structures implemented in C for learning purposes and practical experimentation. The project focuses on data structure implementation, dynamic memory management, API design, and testing.
 
 ## Features
 
-- Dynamic array (`Vector`) of integers
-- Dynamic memory management
+- **Dynamic array (`Vector`)** of integers
+- **Singly linked list (`List`)** of integers
+- Dynamic memory allocation and deallocation
 - Bounds checking for element access
-- Configurable build using GNU Make (release, sanitizer and Valgrind modes)
-- Example program demonstrating the library
+- Insertion, removal, and element modification
+- Configurable builds using GNU Make
+- Example programs for each data structure
+- Unit tests using assertions
+- Memory and undefined behavior checks using AddressSanitizer, UndefinedBehaviorSanitizer, LeakSanitizer, and Valgrind
+
+## Data Structures
+
+### Vector
+
+A dynamically allocated array of integers.
+
+Supported operations:
+
+- Initialize and destroy
+- Append and remove the last element
+- Get and set elements by index
+- Reserve additional capacity
+- Resize the array, initializing new elements to zero
+- Clear all elements while retaining allocated capacity
+- Query size and capacity through the public structure fields
+
+### List
+
+A singly linked list of integers.
+
+Supported operations:
+
+- Initialize and destroy
+- Insert and remove elements at the front or back
+- Get and set elements by index
+- Insert and remove elements at an arbitrary index
+- Query the number of elements and check whether the list is empty
+- Clear all elements while keeping the list initialized
 
 ## Project Structure
 
-```
+```text
 .
-├── include/       # Public header files
-├── src/           # Library implementations
-├── examples/      # Example programs
-├── build/         # Generated build artifacts (one subdirectory per build mode)
+├── include/
+│   ├── list.h
+│   └── vector.h
+├── src/
+│   ├── list.c
+│   └── vector.c
+├── examples/
+│   ├── list_example.c
+│   └── vector_example.c
+├── tests/
+│   ├── test_list.c
+│   └── test_vector.c
+├── build/              # Generated build artifacts
 ├── Makefile
 ├── .gitignore
 └── README.md
 ```
 
+The `build/` directory contains separate outputs for each build mode: `release`, `debug`, and `valgrind`.
+
 ## Requirements
 
 - GCC or another compatible C compiler
 - GNU Make
-- Optional: Valgrind (for `make valgrind`)
+- Valgrind (optional, required for `make valgrind`)
 
 ## Build
 
-Build the library and all examples in release mode (`-O2`):
+Build the static library and all example programs in release mode (`-O2`):
 
-```
+```bash
 make
 ```
 
-Build with AddressSanitizer, UndefinedBehaviorSanitizer and LeakSanitizer
-(`-O0 -g3`):
+Build the library and examples with debugging symbols and AddressSanitizer and UndefinedBehaviorSanitizer enabled:
 
-```
+```bash
 make debug
 ```
 
-Each mode is built into its own directory (`build/release`, `build/debug`,
-`build/valgrind`), so switching between modes never mixes incompatible object files.
+The available build modes are:
 
-## Run
+| Mode | Compiler flags | Purpose |
+|---|---|---|
+| `release` | `-O2` | Optimized build |
+| `debug` | `-O0 -g3` and sanitizers | Debugging and testing |
+| `valgrind` | `-O0 -g3` | Memory analysis with Valgrind |
 
-Build and run an example (the first one found if `EXAMPLE` is not given):
+Each mode uses a separate output directory, so object files from different modes are not mixed.
 
-```
+## Run Examples
+
+Run the default example:
+
+```bash
 make run
+```
+
+Run a specific example:
+
+```bash
 make run EXAMPLE=vector_example
+make run EXAMPLE=list_example
 ```
 
 Run an example with sanitizers enabled:
 
-```
+```bash
 make run MODE=debug EXAMPLE=vector_example
+make run MODE=debug EXAMPLE=list_example
 ```
 
-## Debugging Memory Errors and Undefined Behavior
+## Tests
 
-Build in debug mode and run every example under ASan, UBSan and LSan. The
-command stops with a non-zero exit code and a stack trace on the first problem
-(out-of-bounds access, use-after-free, memory leak, signed overflow, ...):
+Run all unit tests with AddressSanitizer, UndefinedBehaviorSanitizer, and LeakSanitizer:
 
-```
-make check
+```bash
+make test
 ```
 
-Run every example under Valgrind (`-O0 -g3` build, full leak check):
+Run tests for a specific data structure:
 
+```bash
+make test-vector
+make test-list
 ```
+
+The tests cover normal operations, element access, insertion, removal, resizing, clearing, and invalid indices or operations.
+
+## Memory Debugging
+
+Run all examples and unit tests under Valgrind:
+
+```bash
 make valgrind
 ```
 
-Sanitizers and Valgrind cannot be combined, which is why they are separate
-modes. LeakSanitizer is supported on Linux; on macOS use Valgrind or `leaks`
-instead.
+Valgrind checks for memory leaks, invalid memory accesses, and other memory-management errors.
+
+Run all examples and unit tests with sanitizers:
+
+```bash
+make check
+```
+
+Sanitizers and Valgrind are run separately. Sanitizers help detect errors such as out-of-bounds access, use-after-free, and undefined behavior. Valgrind provides an additional check for memory errors and leaks.
+
+A successful run means no issues were detected in the executed code paths; it does not prove that every possible input is handled correctly.
 
 ## Clean
 
 Remove all generated build artifacts:
 
-```
+```bash
 make clean
 ```
 
 ## Make Targets
 
-| Target                | Description                                            |
-| --------------------- | ------------------------------------------------------ |
-| `make`                | Release build of the library and examples              |
-| `make debug`          | Build with ASan + UBSan + LSan                         |
-| `make run`            | Build and run an example (`EXAMPLE=name`, `MODE=debug`) |
-| `make check`          | Run all examples under sanitizers                      |
-| `make valgrind`       | Run all examples under Valgrind                        |
-| `make clean`          | Remove `build/`                                        |
+| Target | Description |
+|---|---|
+| `make` | Build the library and examples in release mode |
+| `make release` | Build explicitly in release mode |
+| `make debug` | Build the library and examples with sanitizers |
+| `make run` | Build and run an example |
+| `make test` | Run all unit tests with sanitizers |
+| `make test-vector` | Run vector tests with sanitizers |
+| `make test-list` | Run list tests with sanitizers |
+| `make check` | Run all examples and tests with sanitizers |
+| `make valgrind` | Run all examples and tests under Valgrind |
+| `make clean` | Remove the `build/` directory |
 
-## Current Data Structures
+## Implementation Status
 
-| Data Structure           | Status      |
-| ------------------------ | ----------- |
+| Data Structure | Status |
+|---|---|
 | Dynamic Array (`Vector`) | Implemented |
+| Singly Linked List (`List`) | Implemented |
 
 ## Learning Goals
 
-This project is intended to explore data structures, memory management, pointers, dynamic allocation, and modular programming in C.
+This project explores:
+
+- Data structures and algorithmic complexity
+- Pointers and pointer manipulation
+- Dynamic memory allocation (`malloc`, `realloc`, `free`)
+- Memory ownership and resource cleanup
+- API design and header files
+- Modular C programming
+- Unit testing and defensive programming
+- Debugging memory errors with sanitizers and Valgrind
 
 ## License
 
-No license has been specified yet.
+This project is licensed under the [MIT License](LICENSE).
+
+Copyright (c) 2026 YOUR NAME
+
+You are free to use, copy, modify, merge, publish, distribute, sublicense, and sell copies of this software, subject to the terms of the MIT License.
