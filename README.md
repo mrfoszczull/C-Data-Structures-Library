@@ -203,6 +203,6 @@ This project explores:
 
 This project is licensed under the [MIT License](LICENSE).
 
-Copyright (c) 2026 YOUR NAME
+Copyright (c) 2026 mrfoszczull
 
 You are free to use, copy, modify, merge, publish, distribute, sublicense, and sell copies of this software, subject to the terms of the MIT License.
