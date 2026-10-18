@@ -6,8 +6,9 @@ A collection of data structures implemented in C for learning purposes and pract
 
 - **Dynamic array (`Vector`)** of integers
 - **Singly linked list (`List`)** of integers
+- **Generic stack (`Stack`)** that stores copies of fixed-size elements
 - Dynamic memory allocation and deallocation
-- Bounds checking for element access
+- Bounds checking and error handling
 - Insertion, removal, and element modification
 - Configurable builds using GNU Make
 - Example programs for each data structure
@@ -28,7 +29,7 @@ Supported operations:
 - Reserve additional capacity
 - Resize the array, initializing new elements to zero
 - Clear all elements while retaining allocated capacity
-- Query size and capacity through the public structure fields
+- Query size and capacity
 
 ### List
 
@@ -43,25 +44,47 @@ Supported operations:
 - Query the number of elements and check whether the list is empty
 - Clear all elements while keeping the list initialized
 
+### Stack
+
+A generic, dynamically allocated LIFO (Last In, First Out) stack. It stores copies of elements of a fixed size specified during initialization.
+
+Supported operations:
+
+- Initialize and destroy
+- Push an element onto the top of the stack
+- Pop and retrieve the top element
+- Peek at the top element without removing it
+- Query the number of elements
+- Check whether the stack is empty
+- Clear all elements while retaining allocated capacity
+- Automatically increase capacity when needed
+
+The stack stores elements as raw bytes. Structures containing pointers are copied shallowly; the memory referenced by those pointers is not duplicated.
+
 ## Project Structure
 
 ```text
 .
 ├── include/
 │   ├── list.h
+│   ├── stack.h
 │   └── vector.h
 ├── src/
 │   ├── list.c
+│   ├── stack.c
 │   └── vector.c
 ├── examples/
 │   ├── list_example.c
+│   ├── stack_example.c
 │   └── vector_example.c
 ├── tests/
 │   ├── test_list.c
+│   ├── test_stack.c
 │   └── test_vector.c
 ├── build/              # Generated build artifacts
 ├── Makefile
 ├── .gitignore
+├── LICENSE
 └── README.md
 ```
 
@@ -110,6 +133,7 @@ Run a specific example:
 ```bash
 make run EXAMPLE=vector_example
 make run EXAMPLE=list_example
+make run EXAMPLE=stack_example
 ```
 
 Run an example with sanitizers enabled:
@@ -117,6 +141,7 @@ Run an example with sanitizers enabled:
 ```bash
 make run MODE=debug EXAMPLE=vector_example
 make run MODE=debug EXAMPLE=list_example
+make run MODE=debug EXAMPLE=stack_example
 ```
 
 ## Tests
@@ -132,9 +157,10 @@ Run tests for a specific data structure:
 ```bash
 make test-vector
 make test-list
+make test-stack
 ```
 
-The tests cover normal operations, element access, insertion, removal, resizing, clearing, and invalid indices or operations.
+The tests cover normal operations, element access, insertion, removal, resizing, clearing, stack ordering, and invalid arguments or operations.
 
 ## Memory Debugging
 
@@ -175,6 +201,7 @@ make clean
 | `make test` | Run all unit tests with sanitizers |
 | `make test-vector` | Run vector tests with sanitizers |
 | `make test-list` | Run list tests with sanitizers |
+| `make test-stack` | Run stack tests with sanitizers |
 | `make check` | Run all examples and tests with sanitizers |
 | `make valgrind` | Run all examples and tests under Valgrind |
 | `make clean` | Remove the `build/` directory |
@@ -185,6 +212,7 @@ make clean
 |---|---|
 | Dynamic Array (`Vector`) | Implemented |
 | Singly Linked List (`List`) | Implemented |
+| Generic Stack (`Stack`) | Implemented |
 
 ## Learning Goals
 
@@ -194,6 +222,7 @@ This project explores:
 - Pointers and pointer manipulation
 - Dynamic memory allocation (`malloc`, `realloc`, `free`)
 - Memory ownership and resource cleanup
+- Generic programming in C using `void *`
 - API design and header files
 - Modular C programming
 - Unit testing and defensive programming
