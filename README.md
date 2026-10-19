@@ -152,16 +152,6 @@ Run all unit tests with AddressSanitizer, UndefinedBehaviorSanitizer, and LeakSa
 make test
 ```
 
-Run tests for a specific data structure:
-
-```bash
-make test-vector
-make test-list
-make test-stack
-```
-
-The tests cover normal operations, element access, insertion, removal, resizing, clearing, stack ordering, and invalid arguments or operations.
-
 ## Memory Debugging
 
 Run all examples and unit tests under Valgrind:
@@ -199,9 +189,6 @@ make clean
 | `make debug` | Build the library and examples with sanitizers |
 | `make run` | Build and run an example |
 | `make test` | Run all unit tests with sanitizers |
-| `make test-vector` | Run vector tests with sanitizers |
-| `make test-list` | Run list tests with sanitizers |
-| `make test-stack` | Run stack tests with sanitizers |
 | `make check` | Run all examples and tests with sanitizers |
 | `make valgrind` | Run all examples and tests under Valgrind |
 | `make clean` | Remove the `build/` directory |

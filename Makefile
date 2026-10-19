@@ -45,9 +45,7 @@ VALGRIND = valgrind --leak-check=full --show-leak-kinds=all \
                     --track-origins=yes --error-exitcode=1
 
 .PHONY: all release debug examples run \
-        check check-run \
-        test test-run test-list test-list-run \
-        test-vector test-vector-run \
+        check check-run test test-run \
         valgrind valgrind-run clean
 
 all: $(LIBRARY) $(EXAMPLE_BINS)
@@ -89,25 +87,16 @@ test:
 	@$(MAKE) --no-print-directory MODE=debug test-run
 
 test-run: $(TEST_BINS)
-	@test -n "$(TEST_BINS)" || { \
-	    echo "No tests found in $(TEST_DIR)/"; exit 1; \
-	}
+	@test -n "$(TEST_BINS)" || { echo "No tests found in $(TEST_DIR)/"; exit 1; }
 	@set -e; for t in $(TEST_BINS); do \
 	    echo "==> $$t (ASan + UBSan + LSan)"; \
 	    $(SAN_ENV) ./$$t; \
 	done
 
-test-list:
-	@$(MAKE) --no-print-directory MODE=debug test-list-run
-
-test-list-run: $(OUT)/tests/test_list
-	$(SAN_ENV) ./$(OUT)/tests/test_list
-
-test-vector:
-	@$(MAKE) --no-print-directory MODE=debug test-vector-run
-
-test-vector-run: $(OUT)/tests/test_vector
-	$(SAN_ENV) ./$(OUT)/tests/test_vector
+test-%:
+	@$(MAKE) --no-print-directory MODE=debug build/debug/tests/test_$*
+	@echo "==> test_$* (ASan + UBSan + LSan)"
+	@$(SAN_ENV) ./build/debug/tests/test_$*
 
 check:
 	@$(MAKE) --no-print-directory MODE=debug check-run
@@ -147,4 +136,3 @@ clean:
 -include $(OBJECTS:.o=.d) \
          $(EXAMPLE_BINS:=.d) \
          $(TEST_BINS:=.d)
-
