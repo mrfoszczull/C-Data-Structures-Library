@@ -5,6 +5,9 @@
 static void test_init_and_empty(void) {
     List l;
 
+    assert(list_size(NULL) == 0);
+    assert(list_is_empty(NULL));
+
     assert(list_init(&l) == 0);
     assert(list_is_empty(&l));
     assert(list_size(&l) == 0);

@@ -92,7 +92,7 @@ The `build/` directory contains separate outputs for each build mode: `release`,
 
 ## Requirements
 
-- GCC or another compatible C compiler
+- A C11-compatible compiler, such as GCC or Clang
 - GNU Make
 - Valgrind (optional, required for `make valgrind`)
 
@@ -104,11 +104,21 @@ Build the static library and all example programs in release mode (`-O2`):
 make
 ```
 
-Build the library and examples with debugging symbols and AddressSanitizer and UndefinedBehaviorSanitizer enabled:
+Build the library and examples with debugging symbols,
+AddressSanitizer, and UndefinedBehaviorSanitizer enabled:
 
 ```bash
 make debug
 ```
+
+The compiler and archiver can be overridden from the command line:
+
+```bash
+make CC=clang
+make CC=gcc
+```
+
+By default, the build uses the system C compiler available as `cc` and the system archiver available as `ar`.
 
 The available build modes are:
 
@@ -146,11 +156,23 @@ make run MODE=debug EXAMPLE=stack_example
 
 ## Tests
 
-Run all unit tests with AddressSanitizer, UndefinedBehaviorSanitizer, and LeakSanitizer:
+Run all unit tests with AddressSanitizer, UndefinedBehaviorSanitizer,
+and LeakSanitizer:
 
 ```bash
 make test
 ```
+
+Run tests for a specific data structure:
+
+```bash
+make test-list
+make test-vector
+make test-stack
+```
+
+All test targets use the debug build with AddressSanitizer,
+UndefinedBehaviorSanitizer, and LeakSanitizer enabled.
 
 ## Memory Debugging
 
@@ -160,7 +182,8 @@ Run all examples and unit tests under Valgrind:
 make valgrind
 ```
 
-Valgrind checks for memory leaks, invalid memory accesses, and other memory-management errors.
+Valgrind checks for memory leaks, invalid memory accesses,
+and other memory-management errors.
 
 Run all examples and unit tests with sanitizers:
 
@@ -188,7 +211,10 @@ make clean
 | `make release` | Build explicitly in release mode |
 | `make debug` | Build the library and examples with sanitizers |
 | `make run` | Build and run an example |
-| `make test` | Run all unit tests with sanitizers |
+| `make test` | Run all tests with sanitizers |
+| `make test-list` | Run list tests with sanitizers |
+| `make test-vector` | Run vector tests with sanitizers |
+| `make test-stack` | Run stack tests with sanitizers |
 | `make check` | Run all examples and tests with sanitizers |
 | `make valgrind` | Run all examples and tests under Valgrind |
 | `make clean` | Remove the `build/` directory |
@@ -221,4 +247,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 Copyright (c) 2026 mrfoszczull
 
-You are free to use, copy, modify, merge, publish, distribute, sublicense, and sell copies of this software, subject to the terms of the MIT License.
+You are free to use, copy, modify, merge, publish, distribute, sublicense, and sell copies of the software, subject to the terms of the MIT License.

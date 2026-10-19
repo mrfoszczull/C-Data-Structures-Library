@@ -1,5 +1,5 @@
-CC   = gcc
-AR   = ar
+CC   ?= cc
+AR   ?= ar
 MODE = release
 
 SRC_DIR     = src

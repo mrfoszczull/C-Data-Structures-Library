@@ -28,9 +28,9 @@ typedef struct {
 int list_init(List *l);
 
 /*
- * Frees all nodes owned by the list.
+ * Frees all nodes owned by the list and resets it to an exmpty state.
+ * The list may be refused agter destruction.
  * Does nothing if l is NULL.
- * The list must be initialized again before reuse.
  */
 void list_destroy(List *l);
 
