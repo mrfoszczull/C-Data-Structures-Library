@@ -231,12 +231,6 @@ int list_remove(List *l, size_t index, int *out) {
     return 0;
 }
 
-size_t list_size(const List *l) { return l->size; }
+size_t list_size(const List *l) { return l == NULL ? 0 : l->size; }
 
-bool list_is_empty(const List *l) {
-    if (l->size == 0) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
+bool list_is_empty(const List *l) { return l == NULL || l->size == NULL; }
