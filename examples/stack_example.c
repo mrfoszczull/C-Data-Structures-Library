@@ -1,5 +1,5 @@
 
-#include "../include/stack.h"
+#include "stack.h"
 
 #include <stdio.h>
 

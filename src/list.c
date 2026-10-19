@@ -1,4 +1,4 @@
-#include "../include/list.h"
+#include "list.h"
 #include <stdlib.h>
 
 int list_init(List *l) {
