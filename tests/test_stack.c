@@ -162,9 +162,41 @@ static void test_clear(void) {
     stack_destroy(&s);
 }
 
+static void test_push_after_destroy(void) {
+    Stack s;
+    int value = 42;
+
+    assert(stack_init(&s, sizeof(value)) == 0);
+    stack_destroy(&s);
+
+    assert(stack_push(&s, &value) == -1);
+}
+
+static void test_invalid_operations(void) {
+    Stack s;
+    int value = 42;
+
+    assert(stack_init(&s, sizeof(int)) == 0);
+
+    assert(stack_push(NULL, &value) == -1);
+    assert(stack_push(&s, NULL) == -1);
+    assert(stack_pop(NULL, &value) == -1);
+    assert(stack_pop(&s, NULL) == -1);
+    assert(stack_peek(NULL, &value) == -1);
+    assert(stack_peek(&s, NULL) == -1);
+
+    stack_destroy(&s);
+
+    assert(stack_push(&s, &value) == -1);
+    assert(stack_pop(&s, &value) == -1);
+    assert(stack_peek(&s, &value) == -1);
+}
+
 int main(void) {
     test_init();
     test_push();
+    test_push_after_destroy();
+    test_invalid_operations();
     test_pop();
     test_peek();
     test_is_empty();

@@ -30,7 +30,7 @@ void stack_destroy(Stack *s) {
 }
 
 int stack_push(Stack *s, const void *element) {
-    if (s == NULL || element == NULL) {
+    if (s == NULL || element == NULL || s->element_size == 0) {
         return -1;
     }
 
