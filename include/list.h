@@ -18,6 +18,7 @@ typedef struct ListNode {
 
 typedef struct {
     ListNode *head; // First node, or NULL if the list is empty
+    ListNode *tail; // Last node, or NULL if the list is empty
     size_t size;    // Number of elements in the list
 } List;
 
