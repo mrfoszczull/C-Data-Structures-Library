@@ -41,7 +41,7 @@ void list_destroy(List *l) {
     list_clear(l);
 }
 
-int list_push_front(List *l, int num) {
+int list_push_front(List *l, int value) {
     if (l == NULL) {
         return -1;
     }
@@ -52,7 +52,7 @@ int list_push_front(List *l, int num) {
         return -1;
     }
 
-    new_node->data = num;
+    new_node->data = value;
     new_node->next = l->head;
     l->head = new_node;
 
@@ -65,7 +65,7 @@ int list_push_front(List *l, int num) {
     return 0;
 }
 
-int list_push_back(List *l, int num) {
+int list_push_back(List *l, int value) {
     if (l == NULL) {
         return -1;
     }
@@ -76,7 +76,7 @@ int list_push_back(List *l, int num) {
         return -1;
     }
 
-    new_node->data = num;
+    new_node->data = value;
     new_node->next = NULL;
 
     if (l->tail == NULL) {
@@ -156,7 +156,7 @@ int list_get(const List *l, size_t index, int *out) {
     return 0;
 }
 
-int list_set(List *l, size_t index, int num) {
+int list_set(List *l, size_t index, int value) {
     if (l == NULL || index >= l->size) {
         return -1;
     }
@@ -167,22 +167,22 @@ int list_set(List *l, size_t index, int num) {
         current = current->next;
     }
 
-    current->data = num;
+    current->data = value;
 
     return 0;
 }
 
-int list_insert(List *l, size_t index, int num) {
+int list_insert(List *l, size_t index, int value) {
     if (l == NULL || index > l->size) {
         return -1;
     }
 
     if (index == 0) {
-        return list_push_front(l, num);
+        return list_push_front(l, value);
     }
 
     if (index == l->size) {
-        return list_push_back(l, num);
+        return list_push_back(l, value);
     }
 
     ListNode *current = l->head;
@@ -197,7 +197,7 @@ int list_insert(List *l, size_t index, int num) {
         return -1;
     }
 
-    new_node->data = num;
+    new_node->data = value;
     new_node->next = current->next;
     current->next = new_node;
     l->size++;

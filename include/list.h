@@ -39,8 +39,8 @@ void list_destroy(List *l);
  * Inserts an element at the beginning or end of the list.
  * Returns 0 on success, -1 if l is NULL or memory allocation fails.
  */
-int list_push_front(List *l, int num);
-int list_push_back(List *l, int num);
+int list_push_front(List *l, int value);
+int list_push_back(List *l, int value);
 
 /*
  * Removes the first or last element of the list.
@@ -58,7 +58,7 @@ int list_pop_back(List *l, int *out);
  * range.
  */
 int list_get(const List *l, size_t index, int *out);
-int list_set(List *l, size_t index, int num);
+int list_set(List *l, size_t index, int value);
 
 /*
  * Inserts or removes an element at the given index.
@@ -70,7 +70,7 @@ int list_set(List *l, size_t index, int num);
  * Returns 0 on success, -1 if an argument is invalid, the index is out of
  * range, or memory allocation fails during insertion.
  */
-int list_insert(List *l, size_t index, int num);
+int list_insert(List *l, size_t index, int value);
 int list_remove(List *l, size_t index, int *out);
 
 /*
